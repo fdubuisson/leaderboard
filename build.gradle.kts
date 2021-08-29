@@ -20,7 +20,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
 
     implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinVersion")
 
+    implementation("org.litote.kmongo:kmongo:4.2.8")
     implementation("org.mongodb:mongodb-driver-sync:$mongoVersion")
 
     implementation("ch.qos.logback:logback-classic:1.2.5")

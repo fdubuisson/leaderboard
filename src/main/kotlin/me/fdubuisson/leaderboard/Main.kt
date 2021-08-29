@@ -1,25 +1,35 @@
 package me.fdubuisson.leaderboard
 
 import com.mongodb.MongoException
-import com.mongodb.client.MongoClients
 import com.typesafe.config.ConfigFactory
+import me.fdubuisson.leaderboard.domain.Player
+import me.fdubuisson.leaderboard.domain.PlayerRepository
+import me.fdubuisson.leaderboard.infrastructure.mongodb.DatabaseLoader
+import me.fdubuisson.leaderboard.infrastructure.mongodb.MongoPlayerRepository
 import org.bson.BsonDocument
 import org.bson.BsonInt64
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import org.koin.java.KoinJavaComponent.inject
 
 fun main() {
-    val config = ConfigFactory.load()
-    val uri = config.getString("mongodb.url")
+    @Suppress("USELESS_CAST")
+    val module = module {
+        single { ConfigFactory.load() }
+        single { DatabaseLoader(get()).load() }
+        single { MongoPlayerRepository(get()) as PlayerRepository }
+    }
 
-    println(uri)
+    startKoin {
+        modules(module)
+    }
 
-    MongoClients.create(uri).use { mongoClient ->
-        val database = mongoClient.getDatabase("admin")
-        try {
-            val command = BsonDocument("ping", BsonInt64(1))
-            val commandResult = database.runCommand(command)
-            println("Connected successfully to server.")
-        } catch (me: MongoException) {
-            System.err.println("An error occurred while attempting to run a command: $me")
-        }
+    val database = DatabaseLoader(ConfigFactory.load()).load()
+    try {
+        val command = BsonDocument("ping", BsonInt64(1))
+        database.runCommand(command)
+        println("Connected successfully to server.")
+    } catch (me: MongoException) {
+        System.err.println("An error occurred while attempting to run a command: $me")
     }
 }
