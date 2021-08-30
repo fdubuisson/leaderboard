@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.5.10"
+    kotlin("plugin.serialization") version "1.5.10"
 }
 
 group = "me.fdubuisson"
@@ -18,6 +19,7 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
 
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-ktor:$koinVersion")
@@ -30,10 +32,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation("io.insert-koin:koin-test:$koinVersion")
-}
-
-tasks.test {
-    useJUnitPlatform()
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 }
 
 tasks.withType<KotlinCompile>() {

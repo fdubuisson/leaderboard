@@ -5,8 +5,12 @@ import org.litote.kmongo.Id
 import org.litote.kmongo.newId
 
 class Player(
+    name: String
+) {
     @BsonId
-    val id: Id<Player> = newId(), // TODO: custom Id ?
-    val name: String, // TODO: VO
+    val id: Id<Player> = newId() // TODO: custom id ?
+
+    val name: String = name
+
     var score: Int = 0
-)
+}
