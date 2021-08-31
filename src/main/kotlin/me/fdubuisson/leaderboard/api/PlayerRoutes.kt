@@ -24,7 +24,7 @@ fun Application.playerRoutes() {
 
             playerRepository.save(player)
 
-            call.respond(player.toDto())
+            call.respond(player.toDto(playerRepository))
         }
 
         get("/players/{playerId}") {
@@ -32,7 +32,7 @@ fun Application.playerRoutes() {
             val player = playerRepository.findById(playerId)
 
             if (player != null) {
-                call.respond(player.toDto())
+                call.respond(player.toDto(playerRepository))
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
@@ -47,7 +47,7 @@ fun Application.playerRoutes() {
                 player.score = input.score
                 playerRepository.save(player)
 
-                call.respond(player.toDto())
+                call.respond(player.toDto(playerRepository))
             } else {
                 call.respond(HttpStatusCode.NotFound)
             }
@@ -67,7 +67,7 @@ data class PlayerDto(
     val id: String,
     val name: String,
     val score: Int,
-    val rank: Int
+    val rank: Long
 )
 
-private fun Player.toDto() = PlayerDto(id.toString(), name, score, 0)
+private fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThan(score) + 1)

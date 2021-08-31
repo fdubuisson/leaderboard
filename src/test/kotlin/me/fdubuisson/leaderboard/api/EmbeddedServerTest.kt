@@ -74,4 +74,29 @@ class EmbeddedServerTest {
             }
         }
     }
+
+    @Test
+    fun `get player rank`() {
+        withTestApplication(Application::main) {
+            val playerRepository by inject(PlayerRepository::class.java)
+            playerRepository.clear()
+            val playersToRank = mapOf(
+                Player("player1").apply { score = 15 } to 2,
+                Player("player2").apply { score = 10 } to 4,
+                Player("player3").apply { score = 20 } to 1,
+                Player("player4").apply { score = 15 } to 2
+            )
+
+            playersToRank.keys.forEach { playerRepository.save(it) }
+
+            playersToRank.forEach { (player, expectedRank) ->
+                handleRequest(HttpMethod.Get, "/players/${player.id}").apply {
+                    assertEquals(HttpStatusCode.OK, response.status())
+
+                    val content = objectMapper.readTree(response.content!!)
+                    assertEquals(expectedRank, content["rank"].asInt())
+                }
+            }
+        }
+    }
 }
