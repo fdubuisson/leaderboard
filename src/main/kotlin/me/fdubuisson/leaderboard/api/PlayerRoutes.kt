@@ -7,11 +7,12 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.put
 import io.ktor.routing.routing
 import me.fdubuisson.leaderboard.domain.Player
 import me.fdubuisson.leaderboard.domain.PlayerRepository
+import me.fdubuisson.leaderboard.utils.asId
 import org.koin.ktor.ext.inject
-import org.litote.kmongo.id.WrappedObjectId
 
 fun Application.playerRoutes() {
     val playerRepository by inject<PlayerRepository>()
@@ -20,14 +21,32 @@ fun Application.playerRoutes() {
         post("/players") {
             val input = call.receive<CreatePlayer>()
             val player = Player(input.name)
+
             playerRepository.save(player)
+
             call.respond(player.toDto())
         }
 
         get("/players/{playerId}") {
-            val playerId = WrappedObjectId<Player>(call.parameters["playerId"]!!)
+            val playerId = call.parameters["playerId"]!!.asId<Player>()
+            val player = playerRepository.findById(playerId)
+
+            if (player != null) {
+                call.respond(player.toDto())
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        put("/players/{playerId}/score") {
+            val playerId = call.parameters["playerId"]!!.asId<Player>()
+            val input = call.receive<UpdateScore>()
+
             val player = playerRepository.findById(playerId)
             if (player != null) {
+                player.score = input.score
+                playerRepository.save(player)
+
                 call.respond(player.toDto())
             } else {
                 call.respond(HttpStatusCode.NotFound)
@@ -38,6 +57,10 @@ fun Application.playerRoutes() {
 
 data class CreatePlayer(
     val name: String
+)
+
+data class UpdateScore(
+    val score: Int
 )
 
 data class PlayerDto(
