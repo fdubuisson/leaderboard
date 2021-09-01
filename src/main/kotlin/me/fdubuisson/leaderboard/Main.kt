@@ -3,6 +3,7 @@ package me.fdubuisson.leaderboard
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.Application
 import io.ktor.application.install
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
@@ -30,6 +31,9 @@ fun Application.main() {
     // Install Ktor features
     install(DefaultHeaders)
     install(CallLogging)
+    install(CORS) {
+        anyHost()
+    }
     install(ContentNegotiation) {
         jackson()
     }
