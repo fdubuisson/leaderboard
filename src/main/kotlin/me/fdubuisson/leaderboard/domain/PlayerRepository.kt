@@ -12,5 +12,7 @@ interface PlayerRepository {
 
     fun countByScoreGreaterThanAndIdGreaterThan(score: Int, id: Id<Player>): Long
 
+    fun countAll(): Long
+
     fun clear()
 }

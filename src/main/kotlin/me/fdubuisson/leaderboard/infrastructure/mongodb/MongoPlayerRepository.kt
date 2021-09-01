@@ -54,6 +54,10 @@ class MongoPlayerRepository(
         )
     }
 
+    override fun countAll(): Long {
+        return playerCollection.countDocuments()
+    }
+
     override fun clear() {
         playerCollection.deleteMany(Filters.empty())
     }

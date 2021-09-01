@@ -30,22 +30,22 @@ class LeaderboardRoutesTest {
 
             playersToRank.forEach { playerRepository.save(it) }
 
-            handleRequest(HttpMethod.Get, "/leaderboard?start=0&count=3").apply {
+            handleRequest(HttpMethod.Get, "/leaderboard?page=0&size=3").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
 
                 val content = objectMapper.readTree(response.content!!)
-                assertEquals(3, content.size())
-                assertEquals(20, content[0].get("score").asInt())
-                assertEquals(15, content[1].get("score").asInt())
-                assertEquals(10, content[2].get("score").asInt())
+                assertEquals(3, content.get("content").size())
+                assertEquals(20, content.get("content")[0].get("score").asInt())
+                assertEquals(15, content.get("content")[1].get("score").asInt())
+                assertEquals(10, content.get("content")[2].get("score").asInt())
             }
 
-            handleRequest(HttpMethod.Get, "/leaderboard?start=3&count=3").apply {
+            handleRequest(HttpMethod.Get, "/leaderboard?page=1&size=3").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
 
                 val content = objectMapper.readTree(response.content!!)
-                assertEquals(1, content.size())
-                assertEquals(0, content[0].get("score").asInt())
+                assertEquals(1, content.get("content").size())
+                assertEquals(0, content.get("content")[0].get("score").asInt())
             }
         }
     }
