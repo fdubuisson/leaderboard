@@ -2,12 +2,17 @@ package me.fdubuisson.leaderboard
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.application.Application
+import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.features.BadRequestException
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.features.StatusPages
+import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.jackson
+import io.ktor.response.respond
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
@@ -36,6 +41,11 @@ fun Application.main() {
     }
     install(ContentNegotiation) {
         jackson()
+    }
+    install(StatusPages) {
+        exception<BadRequestException> {
+            call.respond(HttpStatusCode.BadRequest, mapOf("message" to it.message))
+        }
     }
 
     // Declare Koin
