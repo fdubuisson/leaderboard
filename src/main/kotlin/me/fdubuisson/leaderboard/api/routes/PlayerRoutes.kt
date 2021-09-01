@@ -2,7 +2,7 @@ package me.fdubuisson.leaderboard.api.routes
 
 import io.ktor.application.Application
 import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
+import io.ktor.features.NotFoundException
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.get
@@ -30,28 +30,20 @@ fun Application.playerRoutes() {
 
         get("/players/{playerId}") {
             val playerId = call.parameters["playerId"]!!.asId<Player>()
-            val player = playerRepository.findById(playerId)
+            val player = playerRepository.findById(playerId) ?: throw NotFoundException()
 
-            if (player != null) {
-                call.respond(player.toDto(playerRepository))
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(player.toDto(playerRepository))
         }
 
         put("/players/{playerId}/score") {
             val playerId = call.parameters["playerId"]!!.asId<Player>()
             val input = call.receive<UpdateScore>()
 
-            val player = playerRepository.findById(playerId)
-            if (player != null) {
-                player.score = input.score
-                playerRepository.save(player)
+            val player = playerRepository.findById(playerId) ?: throw NotFoundException()
+            player.score = input.score
+            playerRepository.save(player)
 
-                call.respond(player.toDto(playerRepository))
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(player.toDto(playerRepository))
         }
     }
 }

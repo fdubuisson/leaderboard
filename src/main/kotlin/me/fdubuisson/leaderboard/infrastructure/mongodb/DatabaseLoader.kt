@@ -4,7 +4,6 @@ import com.mongodb.client.MongoDatabase
 import com.typesafe.config.Config
 import org.litote.kmongo.KMongo
 
-
 class DatabaseLoader(
     private val config: Config
 ) {

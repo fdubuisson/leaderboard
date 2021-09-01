@@ -20,10 +20,17 @@ fun Application.leaderboardRoutes() {
             val size: Int by call.request.queryParameters
             val start = page * size
 
-            val players = playerRepository.findAllOrderByScoreDescAndIdAsc(start, size).mapIndexed { index, player ->
-                PlayerDto(player.id.toString(), player.name, player.score, (start + index + 1).toLong())
-            }
+            val players = playerRepository.findAllOrderByScoreDescAndIdAsc(start, size)
+                .mapIndexed { index, player ->
+                    PlayerDto(
+                        player.id.toString(),
+                        player.name,
+                        player.score,
+                        (start + index + 1).toLong()
+                    )
+                }
             val totalPlayers = playerRepository.countAll()
+
             call.respond(Page(players, totalPlayers))
         }
     }
