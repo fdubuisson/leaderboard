@@ -8,7 +8,7 @@ class Player(
     name: String
 ) {
     @BsonId
-    val id: Id<Player> = newId() // TODO: custom id ?
+    val id: Id<Player> = newId()
 
     val name: String = name
 

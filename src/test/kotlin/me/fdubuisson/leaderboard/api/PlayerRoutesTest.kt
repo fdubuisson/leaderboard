@@ -17,7 +17,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class EmbeddedServerTest {
+class PlayerRoutesTest {
     private val objectMapper = ObjectMapper()
 
     @Test
@@ -81,8 +81,8 @@ class EmbeddedServerTest {
             val playerRepository by inject(PlayerRepository::class.java)
             playerRepository.clear()
             val playersToRank = mapOf(
-                Player("player1").apply { score = 15 } to 2,
-                Player("player2").apply { score = 10 } to 4,
+                Player("player1").apply { score = 10 } to 3,
+                Player("player2").apply { score = 0 } to 4,
                 Player("player3").apply { score = 20 } to 1,
                 Player("player4").apply { score = 15 } to 2
             )

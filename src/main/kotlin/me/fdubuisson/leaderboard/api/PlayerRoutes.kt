@@ -70,4 +70,4 @@ data class PlayerDto(
     val rank: Long
 )
 
-private fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThan(score) + 1)
+private fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThanAndIdGreaterThan(score, id) + 1)
