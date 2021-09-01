@@ -12,8 +12,8 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import me.fdubuisson.leaderboard.api.leaderboardRoutes
-import me.fdubuisson.leaderboard.api.playerRoutes
+import me.fdubuisson.leaderboard.api.routes.leaderboardRoutes
+import me.fdubuisson.leaderboard.api.routes.playerRoutes
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import me.fdubuisson.leaderboard.infrastructure.mongodb.DatabaseLoader
 import me.fdubuisson.leaderboard.infrastructure.mongodb.MongoPlayerRepository

@@ -1,4 +1,4 @@
-package me.fdubuisson.leaderboard.api
+package me.fdubuisson.leaderboard.api.routes
 
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -9,6 +9,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
 import io.ktor.routing.routing
+import me.fdubuisson.leaderboard.api.models.PlayerDto
 import me.fdubuisson.leaderboard.domain.Player
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import me.fdubuisson.leaderboard.utils.asId
@@ -55,19 +56,12 @@ fun Application.playerRoutes() {
     }
 }
 
-data class CreatePlayer(
+private data class CreatePlayer(
     val name: String
 )
 
-data class UpdateScore(
+private data class UpdateScore(
     val score: Int
-)
-
-data class PlayerDto(
-    val id: String,
-    val name: String,
-    val score: Int,
-    val rank: Long
 )
 
 private fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThanAndIdGreaterThan(score, id) + 1)

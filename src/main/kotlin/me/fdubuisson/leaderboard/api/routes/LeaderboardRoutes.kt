@@ -1,10 +1,11 @@
-package me.fdubuisson.leaderboard.api
+package me.fdubuisson.leaderboard.api.routes
 
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import me.fdubuisson.leaderboard.api.models.PlayerDto
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import me.fdubuisson.leaderboard.utils.Page
 import org.koin.ktor.ext.inject
