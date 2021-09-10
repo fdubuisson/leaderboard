@@ -4,15 +4,15 @@ import org.litote.kmongo.Id
 
 interface PlayerRepository {
 
-    fun findById(id: Id<Player>): Player?
+    suspend fun findById(id: Id<Player>): Player?
 
-    fun findAllOrderByScoreDescAndIdAsc(start: Int, count: Int): List<Player>
+    suspend fun findAllOrderByScoreDescAndIdAsc(start: Int, count: Int): List<Player>
 
-    fun save(player: Player)
+    suspend fun save(player: Player)
 
-    fun countByScoreGreaterThanAndIdGreaterThan(score: Int, id: Id<Player>): Long
+    suspend fun countByScoreGreaterThanAndIdGreaterThan(score: Int, id: Id<Player>): Long
 
-    fun countAll(): Long
+    suspend fun countAll(): Long
 
-    fun clear()
+    suspend fun clear()
 }

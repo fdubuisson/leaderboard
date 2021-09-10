@@ -56,4 +56,4 @@ private data class UpdateScore(
     val score: Int
 )
 
-private fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThanAndIdGreaterThan(score, id) + 1)
+private suspend fun Player.toDto(playerRepository: PlayerRepository) = PlayerDto(id.toString(), name, score, playerRepository.countByScoreGreaterThanAndIdGreaterThan(score, id) + 1)

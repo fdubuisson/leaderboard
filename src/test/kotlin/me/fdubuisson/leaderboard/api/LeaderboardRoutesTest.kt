@@ -6,6 +6,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import kotlinx.coroutines.runBlocking
 import me.fdubuisson.leaderboard.domain.Player
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import me.fdubuisson.leaderboard.main
@@ -20,7 +21,6 @@ class LeaderboardRoutesTest {
     fun `get leaderboard`() {
         withTestApplication(Application::main) {
             val playerRepository by inject(PlayerRepository::class.java)
-            playerRepository.clear()
             val playersToRank = listOf(
                 Player("player1").apply { score = 10 },
                 Player("player2").apply { score = 0 },
@@ -28,7 +28,10 @@ class LeaderboardRoutesTest {
                 Player("player4").apply { score = 15 }
             )
 
-            playersToRank.forEach { playerRepository.save(it) }
+            runBlocking {
+                playerRepository.clear()
+                playersToRank.forEach { playerRepository.save(it) }
+            }
 
             handleRequest(HttpMethod.Get, "/leaderboard?page=0&size=3").apply {
                 assertEquals(HttpStatusCode.OK, response.status())

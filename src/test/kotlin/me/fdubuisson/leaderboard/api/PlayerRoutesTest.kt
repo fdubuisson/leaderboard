@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import kotlinx.coroutines.runBlocking
 import me.fdubuisson.leaderboard.domain.Player
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import me.fdubuisson.leaderboard.main
@@ -57,7 +58,9 @@ class PlayerRoutesTest {
         withTestApplication(Application::main) {
             val playerRepository by inject(PlayerRepository::class.java)
             val player1 = Player("player1")
-            playerRepository.save(player1)
+            runBlocking {
+                playerRepository.save(player1)
+            }
 
             handleRequest(HttpMethod.Put, "/players/${player1.id}/score") {
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
@@ -79,7 +82,6 @@ class PlayerRoutesTest {
     fun `get player rank`() {
         withTestApplication(Application::main) {
             val playerRepository by inject(PlayerRepository::class.java)
-            playerRepository.clear()
             val playersToRank = mapOf(
                 Player("player1").apply { score = 10 } to 3,
                 Player("player2").apply { score = 0 } to 4,
@@ -87,7 +89,10 @@ class PlayerRoutesTest {
                 Player("player4").apply { score = 15 } to 2
             )
 
-            playersToRank.keys.forEach { playerRepository.save(it) }
+            runBlocking {
+                playerRepository.clear()
+                playersToRank.keys.forEach { playerRepository.save(it) }
+            }
 
             playersToRank.forEach { (player, expectedRank) ->
                 handleRequest(HttpMethod.Get, "/players/${player.id}").apply {

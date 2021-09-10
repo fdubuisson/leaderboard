@@ -1,36 +1,35 @@
 package me.fdubuisson.leaderboard.infrastructure.mongodb
 
-import com.mongodb.client.MongoCollection
-import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
+import kotlinx.coroutines.runBlocking
 import me.fdubuisson.leaderboard.domain.Player
 import me.fdubuisson.leaderboard.domain.PlayerRepository
 import org.litote.kmongo.Id
 import org.litote.kmongo.and
-import org.litote.kmongo.ensureIndex
+import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
-import org.litote.kmongo.findOneById
 import org.litote.kmongo.gt
 import org.litote.kmongo.lt
 import org.litote.kmongo.or
 import org.litote.kmongo.orderBy
-import org.litote.kmongo.save
 
 class MongoPlayerRepository(
-    database: MongoDatabase
+    database: CoroutineDatabase
 ) : PlayerRepository {
-    private val playerCollection: MongoCollection<Player> = database.getCollection("players", Player::class.java)
+    private val playerCollection = database.getCollection<Player>("players")
 
     init {
-        // The player ID is used as a discriminator on score equality.
-        playerCollection.ensureIndex(Player::score, Player::id)
+        runBlocking {
+            // The player ID is used as a discriminator on score equality.
+            playerCollection.ensureIndex(Player::score, Player::id)
+        }
     }
 
-    override fun findById(id: Id<Player>): Player? {
+    override suspend fun findById(id: Id<Player>): Player? {
         return playerCollection.findOneById(id)
     }
 
-    override fun findAllOrderByScoreDescAndIdAsc(start: Int, count: Int): List<Player> {
+    override suspend fun findAllOrderByScoreDescAndIdAsc(start: Int, count: Int): List<Player> {
         return playerCollection.find()
             .sort(orderBy(mapOf(Player::score to false, Player::id to true)))
             .skip(start)
@@ -38,11 +37,11 @@ class MongoPlayerRepository(
             .toList()
     }
 
-    override fun save(player: Player) {
+    override suspend fun save(player: Player) {
         playerCollection.save(player)
     }
 
-    override fun countByScoreGreaterThanAndIdGreaterThan(score: Int, id: Id<Player>): Long {
+    override suspend fun countByScoreGreaterThanAndIdGreaterThan(score: Int, id: Id<Player>): Long {
         return playerCollection.countDocuments(
             or(
                 Player::score gt score,
@@ -54,11 +53,11 @@ class MongoPlayerRepository(
         )
     }
 
-    override fun countAll(): Long {
+    override suspend fun countAll(): Long {
         return playerCollection.countDocuments()
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         playerCollection.deleteMany(Filters.empty())
     }
 }
